@@ -11,7 +11,7 @@ vows.describe('first page').addBatch({
         },
         'we get Hello World': function (err, browser) {
             assert.ok(browser.success);
-            assert.equal (browser.html(), "Hello World\n");
+            assert.equal (browser.html(), "Hello World");
         }
     }
 }).export(module);
