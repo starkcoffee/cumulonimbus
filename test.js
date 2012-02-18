@@ -2,16 +2,21 @@ var vows = require('vows'),
     assert = require('assert'),
     Browser = require("zombie");
 
-var browser = new Browser();
+var site = "http://localhost:1337/";
+var b = new Browser();
 
-vows.describe('first page').addBatch({
-    'when requesting first page': {
+vows.describe('upload page').addBatch({
+    'when posting a title': {
         topic: function(){
-            browser.visit("http://localhost:1337/", this.callback);
+            var topic = this;
+            b.visit(site, function(err, b){
+                assert.ok(b.success);
+                b.fill("title", "Menacing Cloud");
+                b.pressButton("foo", topic.callback);
+            });
         },
-        'we get Hello World': function (err, browser) {
-            assert.ok(browser.success);
-            assert.equal (browser.html(), "Hello World");
+        'we get the title back as response': function (err, b) {
+            assert.equal(b.html(), "Menacing Cloud");
         }
     }
 }).export(module);
