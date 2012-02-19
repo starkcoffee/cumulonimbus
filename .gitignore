@@ -2,3 +2,4 @@ node_modules/
 *.swp
 .pid
 out.log
+npm-debug.log

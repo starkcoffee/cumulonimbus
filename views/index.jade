@@ -2,10 +2,14 @@
 html(lang="en")
   head
     title= "Cumulonimbus"
-    script(type='text/javascript')
-      if (foo) {
-         bar()
-      }
+    script(type="text/javascript", src="http://code.jquery.com/jquery-1.7.1.js")
+    script(type="text/javascript")
+        $(document).ready(function(){
+            $("#file").change(function(){
+                console.log("hi");
+                $("#confirm").click();
+            });
+        });
   body
     h1 Upload all your fine work to Cumulonimbus
     #container
@@ -13,6 +17,6 @@ html(lang="en")
         p
             input(name="title", type="text", placeholder="Enter a title", size=50)
         p
-            input(name="file", type="file")
+            input(id="file", name="file", type="file")
         p
-            input(name="submit", type="submit")
+            input(id="confirm", name="confirm", type="submit", value="Confirm")

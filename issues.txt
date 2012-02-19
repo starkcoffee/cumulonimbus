@@ -1,0 +1,46 @@
+So 19 Feb 2012 13:37:21 CET
+
+ZOMBIE CAN'T HANDLE MULTIPART FORMS
+zombie test hat aufgehört zu funktionieren, nachdem ich ein file element in das
+form hinzugefügt habe.  node.js wirft einen fehler:
+
+Error: parser error, 2 of 35 bytes parsed
+    at IncomingForm.write (/Users/duana/projects/cumulonimbus/node_modules/express/node_modules/connect/node_modules/formidable/lib/incoming_form.js:141:17)
+    at IncomingMessage.<anonymous> (/Users/duana/projects/cumulonimbus/node_modules/express/node_modules/connect/node_modules/formidable/lib/incoming_form.js:91:12)
+
+und es hat damit zu tun, dass zombie die content-length header nicht setzt.
+
+es gibt schon ein issue für dieses problem:
+https://github.com/assaf/zombie/issues/261
+
+ich wollte sehen ob ich das fixen könnte. ich habe das zombie projekt
+heruntergeladen und versucht die tests laufen zu lassen, aber dann musste ich
+mein node.js upgraden. dann bekam ich den folgenden fehler:
+
+Error: Unable to load shared library /Users/duana/projects/cumulonimbus/node_modules/zombie/node_modules/jsdom/node_modules/contextify/build/Release/contextify.node
+    at Object..node (module.js:472:11)
+    at Module.load (module.js:348:31)
+    at Function._load (module.js:308:12)
+    at Module.require (module.js:354:17)
+
+irgendwas ist schief mit dem "contextify" dependency. ich muss npm und den
+"require"  mechanismus lernen, bevore ich weiter kann.
+
+FORMIDABLE AND EXPRESS.BODY_PARSER DON'T PLAY NICE
+als das formidable.IncomingForm zum ersten mal verwendete, bekam ich keine
+antwort vom server, als ich versuchte habe, das form hochzuladen. auch mit curl
+funktionierte es nicht - nach dem 'Continue' Befehl passierte nichts - der
+server ist hängen geblieben.
+
+< HTTP/1.1 100 Continue
+HTTP/1.1 100 Continue
+
+als vermutung habe ich 'app.use(express.bodyParser());' weggemacht, dann ging
+es. ich muss lernen, wie diese "use" methode funktioniert.
+
+JADE DOES NOT GIVE NICE PARSE ERRORS
+
+WHY ARENT I GETTING ERRORS WHEN JQUERY SELECTOR DOESNT MATCH?
+
+
+

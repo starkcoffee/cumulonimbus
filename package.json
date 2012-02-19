@@ -1,0 +1,35 @@
+{ "name": "cumulonimbus",
+  "version": "0.9.1",
+  "description": "Insane file upload using Node.js",
+  "homepage": "",
+  "author": "Duana Stanley <starkcoffee@gmail.com>",
+  "contributors": [],
+  "keywords": [],
+  "main": "server",
+  "scripts": {
+    "test":   "vows --spec test.js"
+  },
+  "engines": {
+    "node": ">= 0.6.9"
+  },
+  "dependencies": {
+    "express":          "~2.5.8",
+    "jade":             "~0.20.3"
+  },
+  "devDependencies": {
+    "zombie":           "~0.12.14",
+    "vows":             "~0.6.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "http://github.com/starkcoffee/cumulonimbus"
+  },
+  "bugs": {
+    "url": "http://github.com/starkcoffee/cumulonimbus/issues"
+  },
+  "licenses": [
+    { "type": "MIT",
+      "url": "http://github.com/assaf/zombie/blob/master/MIT-LICENSE"
+    }
+  ]
+}
