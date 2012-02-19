@@ -3,6 +3,7 @@ var vows = require('vows'),
     Browser = require("zombie");
 
 var site = "http://localhost:1337/";
+Browser.debug = true;
 var b = new Browser();
 
 vows.describe('upload page').addBatch({
@@ -12,7 +13,7 @@ vows.describe('upload page').addBatch({
             b.visit(site, function(err, b){
                 assert.ok(b.success);
                 b.fill("title", "Menacing Cloud");
-                b.pressButton("foo", topic.callback);
+                b.pressButton("submit", topic.callback);
             });
         },
         'we get the title back as response': function (err, b) {

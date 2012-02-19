@@ -7,10 +7,12 @@ html(lang="en")
          bar()
       }
   body
-    h1 Update all your fine work to Cumulonimbus
+    h1 Upload all your fine work to Cumulonimbus
     #container
-      form(method = "POST", action = "/")
+      form(method = "POST", action = "/", enctype = "multipart/form-data")
         p
             input(name="title", type="text", placeholder="Enter a title", size=50)
         p
-            input(name="foo", type="submit")
+            input(name="file", type="file")
+        p
+            input(name="submit", type="submit")

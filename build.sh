@@ -6,7 +6,7 @@ kill_prev_server(){
 }
 
 start_server(){
-    node server.js &
+    (node server.js &> out.log) &
     echo $! > .pid
 }
 
@@ -16,6 +16,6 @@ run_tests(){
 
 kill_prev_server
 start_server
-run_tests
+#run_tests
 
 
