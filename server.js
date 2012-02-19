@@ -9,7 +9,6 @@ var app = express.createServer();
 app.configure(function(){
     app.set('view engine', 'jade');
     app.set('view options', { layout: false });
-    app.set('upload dir', "uploads");
 });
 
 app.get('/', function(req, res){
@@ -50,5 +49,6 @@ function badResponse(res, e){
 
 function uploadResponse(res, filename){
     res.writeHead(200, {'content-type': 'text/html'});
-    res.end("path on server: " + filename);
+    res.end("<html><body><div id='result'>path on server: "
+            + filename + "</div></body></html>");
 };

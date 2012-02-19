@@ -45,3 +45,10 @@ WHY ARENT I GETTING ERRORS WHEN JQUERY SELECTOR DOESNT MATCH?
 FORMIDABLE KEEP EXTENSIONS ISNT WORKING
 form.keepExtensions = true; seems to be a noop
 
+CANT DISPLAY CLIENT ERRORS FROMS SECRET FRAME
+secret frame is cool. but if an error happens and the server doesn't give a response,
+(eg. kill the connection) i can't display the error to the user - i can't
+access the frame. js error is:
+Unsafe JavaScript attempt to access frame with URL chrome://chromewebdata/ from frame with URL http://localhost:1337/. Domains, protocols and ports must match."
+
+Can I assume connection problems here?
