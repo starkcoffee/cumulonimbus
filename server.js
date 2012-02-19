@@ -4,14 +4,12 @@ var formidable = require('formidable');
 var util = require('util');
 var uuid = require('node-uuid');
 
-var TMP_UPLOAD_DIR = "tmp";
-var UPLOAD_DIR = "uploads";
-
 var app = express.createServer();
 
 app.configure(function(){
     app.set('view engine', 'jade');
     app.set('view options', { layout: false });
+    app.set('upload dir', "uploads");
 });
 
 app.get('/', function(req, res){
@@ -19,17 +17,14 @@ app.get('/', function(req, res){
 });
 
 app.post('/', function(req, res){
-    var form = new formidable.IncomingForm();
-    form.uploadDir = TMP_UPLOAD_DIR;
-    form.parse(req, function(err, fields, files) {
-      res.writeHead(200, {'content-type': 'text/plain'});
+    formidableForm().parse(req, function(err, fields, files) {
       // res.end(util.inspect({fields: fields, files: files}));
-      var filename = UPLOAD_DIR + "/" + uuid.v1();
+      var filename = newFilename();
       fs.rename(files.file.path, filename, function(e){
-        if(e){
-            res.end("exception: " + e);
-        }
-        res.end("file on server: " + filename);
+        if(e)
+            badResponse(res, e);
+        else
+            uploadResponse(res, filename);
       });
 
     });
@@ -37,3 +32,23 @@ app.post('/', function(req, res){
 
 app.listen(1337);
 console.log('Cumulonimbus running at http://127.0.0.1:1337/');
+
+function formidableForm(){
+    var form = new formidable.IncomingForm();
+    form.uploadDir = "tmp";
+    return form;
+};
+
+function newFilename(){
+    return "uploads/" + uuid.v1();
+};
+
+function badResponse(res, e){
+    res.writeHead(500, {'content-type': 'text/html'});
+    res.end("something bad happened: " + e);
+};
+
+function uploadResponse(res, filename){
+    res.writeHead(200, {'content-type': 'text/html'});
+    res.end("path on server: " + filename);
+};
