@@ -6,7 +6,7 @@ html(lang="en")
     script(type="text/javascript")
         $(document).ready(function(){
             $("#file").change(function(){
-                $("#confirm").click();
+                this.form.submit();
             });
             $("#upload_response_secret_frame").load(function(){
                $("#status").html($("#upload_response_secret_frame").contents().find("#result").html());
@@ -16,13 +16,14 @@ html(lang="en")
   body
     h1 Upload all your fine work to Cumulonimbus
     #container
-      form(method = "POST", action = "/", enctype = "multipart/form-data", target = "upload_response_secret_frame")
         p
             #status.
                 Select a file!
-        p
-            input(id="file", name="file", type="file")
-            iframe(id="upload_response_secret_frame", name="upload_response_secret_frame", src="", style="width:0;height:0;")
+        form(method = "POST", action = "/", enctype = "multipart/form-data", target = "upload_response_secret_frame")
+            p
+                input(name="id", value="foo", type="hidden")
+                input(id="file", name="file", type="file")
+                iframe(id="upload_response_secret_frame", name="upload_response_secret_frame", src="", style="width:0;height:0;")
         p
             input(name="title", type="text", placeholder="Enter a title", size=50)
         p

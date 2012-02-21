@@ -17,7 +17,11 @@ app.get('/', function(req, res){
 
 app.post('/', function(req, res){
     formidableForm().parse(req, function(err, fields, files) {
-      //res.end(util.inspect({fields: fields, files: files}));
+      //console.log(util.inspect({fields: fields, files: files}));
+      if(fields.id == undefined){
+        badRequest(res, "missing id");
+        return;
+      }
       if(files.file == undefined){
         badRequest(res, "wrong fieldname");
         return;

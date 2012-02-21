@@ -16,7 +16,8 @@ vows.describe('file upload').addBatch({
             rest.post(baseURL, {
                 multipart: true,
                 data: {
-                    'file': rest.file(file, file, size)
+                    'file': rest.file(file, file, size),
+                    'id' : 'foo'
                 }
             }).on('complete', function(data, response){
                 topic.callback(null, data, response);
@@ -33,7 +34,8 @@ vows.describe('file upload').addBatch({
             rest.post(baseURL, {
                 multipart: true,
                 data: {
-                    'bla': rest.file(file, file, size)
+                    'bla': rest.file(file, file, size),
+                    'id': 'foo'
                 }
             }).on('complete', function(data, response){
                 topic.callback(null, data, response);
@@ -43,6 +45,24 @@ vows.describe('file upload').addBatch({
             assert.equal(response.statusCode, 400);
             assert.equal(data, "wrong fieldname");
         }
+    },
+    'when uploading without the id':{
+        topic: function(){
+            var topic = this;
+            rest.post(baseURL, {
+                multipart: true,
+                data: {
+                    'bla': rest.file(file, file, size)
+                }
+            }).on('complete', function(data, response){
+                topic.callback(null, data, response);
+            });
+        },
+        'the response should be bad request': function (err, data, response) {
+            assert.equal(response.statusCode, 400);
+            assert.equal(data, "missing id");
+        }
     }
+
 }).export(module);
 
