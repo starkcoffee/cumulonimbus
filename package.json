@@ -20,6 +20,7 @@
   "devDependencies": {
     "zombie":           "~0.12.14",
     "vows":             "~0.6.1"
+    "restler":          "~0.2.5"
   },
   "repository": {
     "type": "git",

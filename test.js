@@ -1,23 +1,29 @@
 var vows = require('vows'),
     assert = require('assert'),
-    Browser = require("zombie");
+    rest = require('restler');
 
-var site = "http://localhost:1337/";
-Browser.debug = true;
-var b = new Browser();
 
-vows.describe('upload page').addBatch({
-    'when posting a title': {
+var file = 'test-upload.png',
+    stat = require('fs').statSync(file),
+    size = stat['size'];
+
+var baseURL = "http://localhost:1337/";
+
+vows.describe('file upload').addBatch({
+    'when uploading a file': {
         topic: function(){
             var topic = this;
-            b.visit(site, function(err, b){
-                assert.ok(b.success);
-                b.fill("title", "Menacing Cloud");
-                b.pressButton("submit", topic.callback);
+            rest.post(baseURL, {
+                multipart: true,
+                data: {
+                    'file': rest.file(file, file, size)
+                }
+            }).on('2XX', function(data, respStatus){
+                topic.callback(null, data);
             });
         },
-        'we get the title back as response': function (err, b) {
-            assert.equal(b.html(), "Menacing Cloud");
+        'the response contains the path of uploaded file on server': function (err, response) {
+            assert.match(response, /.*<div id='result'>path on server: uploads.+<\/div>.*/);
         }
     }
 }).export(module);

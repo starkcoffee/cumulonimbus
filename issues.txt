@@ -52,3 +52,6 @@ access the frame. js error is:
 Unsafe JavaScript attempt to access frame with URL chrome://chromewebdata/ from frame with URL http://localhost:1337/. Domains, protocols and ports must match."
 
 Can I assume connection problems here?
+
+NEED BETTER HTML PARSING
+look more into Apricot - doco is not great

@@ -24,6 +24,6 @@ run_tests(){
 
 kill_prev_server
 start_server
-#run_tests
+run_tests
 
 

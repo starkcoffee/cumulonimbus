@@ -17,7 +17,7 @@ app.get('/', function(req, res){
 
 app.post('/', function(req, res){
     formidableForm().parse(req, function(err, fields, files) {
-      // res.end(util.inspect({fields: fields, files: files}));
+      //res.end(util.inspect({fields: fields, files: files}));
       var filename = newFilename();
       fs.rename(files.file.path, filename, function(e){
         if(e)
@@ -25,7 +25,6 @@ app.post('/', function(req, res){
         else
             uploadResponse(res, filename);
       });
-
     });
 });
 
