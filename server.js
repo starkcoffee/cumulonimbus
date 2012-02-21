@@ -1,10 +1,12 @@
-var express = require('express');
-var fs = require('fs');
-var formidable = require('formidable');
-var util = require('util');
-var uuid = require('node-uuid');
+var express = require('express'),
+    fs = require('fs'),
+    formidable = require('formidable'),
+    util = require('util'),
+    uuid = require('node-uuid');
 
 var app = express.createServer();
+
+var db = {};
 
 app.configure(function(){
     app.set('view engine', 'jade');
@@ -32,10 +34,22 @@ app.post('/', function(req, res){
         if(e)
             internalServerError(res, e);
         else
+            db[fields.id] = filename;
             uploadResponse(res, filename);
       });
     });
 });
+
+
+app.post('/confirm', function(req, res){
+    formidableForm().parse(req, function(err, fields, files) {
+        res.render("confirmed", {
+            title: fields.title,
+            path: db[fields.id]
+        });
+    });
+});
+
 
 app.listen(1337);
 console.log('Cumulonimbus running at http://127.0.0.1:1337/');

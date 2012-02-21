@@ -7,18 +7,18 @@ var file = 'test-upload.png',
     stat = require('fs').statSync(file),
     size = stat['size'];
 
-var baseURL = "http://localhost:1337/";
+var baseURL = "http://localhost:1337";
 
 vows.describe('file upload').addBatch({
     'when uploading a file': {
         topic: function(){
-            post({
-                multipart: true,
-                data: {
+            post("/",
+                {   multipart: true,
+                    data: {
                     'file': rest.file(file, file, size),
                     'id' : 'foo'
-                }
-            }, this.callback);
+                    }
+                }, this.callback);
         },
         'the response contains the path of uploaded file on server': function (err, data, response) {
             assert.equal(response.statusCode, 200);
@@ -27,13 +27,13 @@ vows.describe('file upload').addBatch({
     },
     'when uploading with the wrong input field name':{
         topic: function(){
-            post({
-                multipart: true,
-                data: {
-                    'bad-file-fieldname': rest.file(file, file, size),
-                    'id': 'foo'
-                }
-            }, this.callback);
+            post("/",
+                {   multipart: true,
+                    data: {
+                        'bad-file-fieldname': rest.file(file, file, size),
+                        'id': 'foo'
+                    }
+                }, this.callback);
         },
         'the response should be bad request': function (err, data, response) {
             assert.equal(response.statusCode, 400);
@@ -42,23 +42,48 @@ vows.describe('file upload').addBatch({
     },
     'when uploading without the id':{
         topic: function(){
-            post({
-                multipart: true,
-                data: {
-                    'file': rest.file(file, file, size)
-                }
-            }, this.callback);
+            post("/",
+                {   multipart: true,
+                    data: {
+                        'file': rest.file(file, file, size)
+                    }
+                }, this.callback);
         },
         'the response should be bad request': function (err, data, response) {
             assert.equal(response.statusCode, 400);
             assert.equal(data, "missing id");
         }
+    },
+    'when confirming after uploading a file':{
+        topic: function(){
+            var that = this;
+            post("/",
+                {   multipart: true,
+                    data: {
+                        'file': rest.file(file, file, size),
+                        'id': 'foo'
+                    }
+                }, function(err, data, response){
+                    assert.equal(response.statusCode, 200);
+                    post("/confirm",
+                        {   data: {
+                                'title': 'bananas',
+                                'id': 'foo'
+                            }
+                        }, that.callback);
+                }
+            );
+        },
+        'the title should be posted and response shows file details': function(err, data, response){
+            assert.equal(response.statusCode, 200);
+            assert.match(data, /.*<p id="title">title is bananas<\/p>.*/);
+            assert.match(data, /.*<p id="path">path on server is uploads.+<\/p>.*/);
+        }
     }
-
 }).export(module);
 
-function post(form, callbackForAssertion){
-   rest.post(baseURL, form)
+function post(relativeURL, form, callbackForAssertion){
+   rest.post(baseURL + relativeURL, form)
     .on('complete', function(data, response){
         callbackForAssertion(null, data, response);
     });

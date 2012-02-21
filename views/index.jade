@@ -24,7 +24,10 @@ html(lang="en")
                 input(name="id", value="foo", type="hidden")
                 input(id="file", name="file", type="file")
                 iframe(id="upload_response_secret_frame", name="upload_response_secret_frame", src="", style="width:0;height:0;")
-        p
-            input(name="title", type="text", placeholder="Enter a title", size=50)
-        p
-            input(id="confirm", name="confirm", type="submit", value="Confirm")
+        form(method = "POST", action = "/confirm")
+            p
+                input(name="title", type="text", placeholder="Enter a title", size=50)
+
+            p
+                input(id="confirm", name="confirm", type="submit", value="Confirm")
+                input(name="id", value="foo", type="hidden")
