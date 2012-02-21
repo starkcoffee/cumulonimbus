@@ -12,16 +12,13 @@ var baseURL = "http://localhost:1337/";
 vows.describe('file upload').addBatch({
     'when uploading a file': {
         topic: function(){
-            var topic = this;
-            rest.post(baseURL, {
+            post({
                 multipart: true,
                 data: {
                     'file': rest.file(file, file, size),
                     'id' : 'foo'
                 }
-            }).on('complete', function(data, response){
-                topic.callback(null, data, response);
-            });
+            }, this.callback);
         },
         'the response contains the path of uploaded file on server': function (err, data, response) {
             assert.equal(response.statusCode, 200);
@@ -30,16 +27,13 @@ vows.describe('file upload').addBatch({
     },
     'when uploading with the wrong input field name':{
         topic: function(){
-            var topic = this;
-            rest.post(baseURL, {
+            post({
                 multipart: true,
                 data: {
-                    'bla': rest.file(file, file, size),
+                    'bad-file-fieldname': rest.file(file, file, size),
                     'id': 'foo'
                 }
-            }).on('complete', function(data, response){
-                topic.callback(null, data, response);
-            });
+            }, this.callback);
         },
         'the response should be bad request': function (err, data, response) {
             assert.equal(response.statusCode, 400);
@@ -48,15 +42,12 @@ vows.describe('file upload').addBatch({
     },
     'when uploading without the id':{
         topic: function(){
-            var topic = this;
-            rest.post(baseURL, {
+            post({
                 multipart: true,
                 data: {
-                    'bla': rest.file(file, file, size)
+                    'file': rest.file(file, file, size)
                 }
-            }).on('complete', function(data, response){
-                topic.callback(null, data, response);
-            });
+            }, this.callback);
         },
         'the response should be bad request': function (err, data, response) {
             assert.equal(response.statusCode, 400);
@@ -65,4 +56,12 @@ vows.describe('file upload').addBatch({
     }
 
 }).export(module);
+
+function post(form, callbackForAssertion){
+   rest.post(baseURL, form)
+    .on('complete', function(data, response){
+        callbackForAssertion(null, data, response);
+    });
+
+};
 
