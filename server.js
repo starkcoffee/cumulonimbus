@@ -18,10 +18,15 @@ app.get('/', function(req, res){
 app.post('/', function(req, res){
     formidableForm().parse(req, function(err, fields, files) {
       //res.end(util.inspect({fields: fields, files: files}));
+      if(files.file == undefined){
+        badRequest(res, "wrong fieldname");
+        return;
+      }
+
       var filename = newFilename();
       fs.rename(files.file.path, filename, function(e){
         if(e)
-            badResponse(res, e);
+            internalServerError(res, e);
         else
             uploadResponse(res, filename);
       });
@@ -41,7 +46,12 @@ function newFilename(){
     return "uploads/" + uuid.v1();
 };
 
-function badResponse(res, e){
+function badRequest(res, message){
+    res.writeHead(400, {'content-type': 'text/html'});
+    res.end(message);
+};
+
+function internalServerError(res, e){
     res.writeHead(500, {'content-type': 'text/html'});
     res.end("something bad happened: " + e);
 };
