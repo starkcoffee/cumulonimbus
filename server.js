@@ -17,7 +17,7 @@ app.get('/', function(req, res){
     res.render("index");
 });
 
-app.post('/', function(req, res){
+app.post('/upload', function(req, res){
     formidableForm().parse(req, function(err, fields, files) {
       //console.log(util.inspect({fields: fields, files: files}));
       if(fields.id == undefined){
