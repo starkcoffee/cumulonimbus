@@ -9,7 +9,7 @@ var app = express.createServer();
 var db = {"progress-test-id": {
                     filename: "progress-test",
                     tmpFile: "tmp/progress-test",
-                    contentLength: 28
+                    size: 28
                 }
           };
 
@@ -24,7 +24,6 @@ app.get('/', function(req, res){
 
 app.post('/upload', function(req, res){
     formidableForm().parse(req, function(err, fields, files) {
-      //console.log(util.inspect({fields: fields, files: files}));
       if(notSet(fields.id)){
         badRequest(res, "missing id");
         return;
@@ -37,7 +36,9 @@ app.post('/upload', function(req, res){
       var filename = newFilename();
       db[fields.id] = {
             filename: filename,
-            tmpFile: files.file.path};
+            tmpFile: files.file.path,
+            size: files.file.size
+        };
       fs.rename(files.file.path, filename, function(e){
         if(e)
             internalServerError(res, e);
@@ -61,10 +62,24 @@ app.post('/confirm', function(req, res){
 app.get('/progress/:id', function(req, res){
     var uploadInfo = db[req.params.id];
     fs.stat(uploadInfo.tmpFile, function(err, stat){
-        res.send({
-            bytes: stat.size,
-            percent: stat.size / uploadInfo.contentLength * 100
-        });
+        if(err){
+            fs.stat(uploadInfo.filename, function(err, stat){
+                if(err){
+                }
+                else{
+                    res.send({
+                        bytes: stat.size,
+                        percent: stat.size / uploadInfo.size * 100
+                    });
+                }
+            });
+        }
+        else{
+            res.send({
+                bytes: stat.size,
+                percent: stat.size / uploadInfo.size * 100
+            });
+        }
     });
 });
 

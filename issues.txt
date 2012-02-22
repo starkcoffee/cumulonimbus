@@ -59,3 +59,8 @@ look more into Apricot - doco is not great
 FIND A WAY TO DO CALLS IN SYNC
 look at the "when confirming after uploading a file" test code.. chaining posts
 like that is ugly
+
+VOWS DOESNT DISPLAY ERROR BEING THROWN IN TOPIC FUNCTION
+i had some errorful code in topic: function(){...} and the test fails just saying
+✗ Errored » callback not fired
+sux0r!

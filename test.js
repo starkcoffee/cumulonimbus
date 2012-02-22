@@ -21,7 +21,7 @@ vows.describe('file upload').addBatch({
                     }
                 }, this.callback);
         },
-        'the response contains the path of uploaded file on server': function (err, data, response) {
+        'response contains the path of uploaded file on server': function (err, data, response) {
             assert.equal(response.statusCode, 200);
             assert.match(data, /.*<div id='result'>path on server: uploads.+<\/div>.*/);
         }
@@ -46,7 +46,7 @@ vows.describe('file upload').addBatch({
                 }
             );
         },
-        'the title should be posted and response shows file details': function(err, data, response){
+        'title should be posted and response shows file details': function(err, data, response){
             assert.equal(response.statusCode, 200);
             assert.match(data, /.*<p id="title">title is bananas<\/p>.*/);
             assert.match(data, /.*<p id="path">path on server is uploads.+<\/p>.*/);
@@ -62,7 +62,7 @@ vows.describe('file upload').addBatch({
                     }
                 }, this.callback);
         },
-        'the response should be bad request': function (err, data, response) {
+        'response should be bad request': function (err, data, response) {
             assert.equal(response.statusCode, 400);
             assert.equal(data, "wrong fieldname");
         }
@@ -76,16 +76,16 @@ vows.describe('file upload').addBatch({
                     }
                 }, this.callback);
         },
-        'the response should be bad request': function (err, data, response) {
+        'response should be bad request': function (err, data, response) {
             assert.equal(response.statusCode, 400);
             assert.equal(data, "missing id");
         }
     },
     'when confirming without the id':{
-        'the response should be bad request': "pending"
+        'response should be bad request': "pending"
     },
     'when confirming without having uploaded the file':{
-        'the response should be bad request': "pending"
+        'response should be bad request': "pending"
     }
 
 }).export(module);
@@ -93,20 +93,34 @@ vows.describe('file upload').addBatch({
 vows.describe("progress status").addBatch({
     // this test uses seeded test data in the datastore, simulating
     // a partial upload
-    'when asking for bytes uploaded': {
+    'when asking for progress of an upload': {
         topic: function(){
             var testFile = fs.openSync("tmp/progress-test", "w");
             fs.writeSync(testFile, "part of a file", 0);
             get("/progress/progress-test-id", this.callback);
         },
-        'the response should contain num bytes of file written so far': function (err, data, response) {
+        'response should contain bytes and percent so far': function (err, data, response) {
             assert.equal(response.statusCode, 200);
             var json = eval(data);
             assert.equal(json.bytes, "part of a file".length);
             assert.equal(json.percent, 50);
         }
     },
-
+    'when asking for progress when upload has completed': {
+        topic: function(){
+            var that = this;
+            upload("upload-id", file, size, function(err, data, response){
+                assert.equal(response.statusCode, 200);
+                get("/progress/upload-id", that.callback);
+            });
+        },
+        'response should show total bytes and 100 %': function(err, data, response){
+            assert.equal(response.statusCode, 200);
+            var json = eval(data);
+            assert.equal(json.bytes, size);
+            assert.equal(json.percent, 100);
+        }
+    }
 }).export(module);
 
 function post(relativeURL, form, callbackForAssertion){
@@ -121,5 +135,15 @@ function get(relativeURL, callbackForAssertion){
     .on('complete', function(data, response){
         callbackForAssertion(null, data, response);
     });
+};
+
+function upload(id, file, size, callbackForAssertion){
+    var form = {    multipart: true,
+                    data: {
+                        'file': rest.file(file, file, size),
+                        'id': id
+                    }
+               };
+    post("/upload", form, callbackForAssertion);
 };
 
