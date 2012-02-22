@@ -91,17 +91,19 @@ vows.describe('file upload').addBatch({
 }).export(module);
 
 vows.describe("progress status").addBatch({
+    // this test uses seeded test data in the datastore, simulating
+    // a partial upload
     'when asking for bytes uploaded': {
         topic: function(){
             var testFile = fs.openSync("tmp/progress-test", "w");
-            fs.writeSync(testFile, "part of file", 0);
+            fs.writeSync(testFile, "part of a file", 0);
             get("/progress/progress-test-id", this.callback);
         },
         'the response should contain num bytes of file written so far': function (err, data, response) {
             assert.equal(response.statusCode, 200);
             var json = eval(data);
-            assert.equal(json.bytes, "part of file".length);
-            //assert.equal(json.percent, 100);
+            assert.equal(json.bytes, "part of a file".length);
+            assert.equal(json.percent, 50);
         }
     },
 

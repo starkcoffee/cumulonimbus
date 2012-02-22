@@ -1,5 +1,5 @@
 #!/bin/bash
-kill_prev_server(){
+kill_server(){
     if [ -f .pid ]; then
         cat .pid | xargs kill 2> /dev/null
     fi
@@ -22,8 +22,9 @@ run_tests(){
     vows --spec test.js
 }
 
-kill_prev_server
+kill_server
 start_server
 run_tests
+kill_server
 
 

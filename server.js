@@ -6,7 +6,12 @@ var express = require('express'),
 
 var app = express.createServer();
 
-var db = {"progress-test-id": {filename: "progress-test", tmpFile: "tmp/progress-test" }};
+var db = {"progress-test-id": {
+                    filename: "progress-test",
+                    tmpFile: "tmp/progress-test",
+                    contentLength: 28
+                }
+          };
 
 app.configure(function(){
     app.set('view engine', 'jade');
@@ -54,9 +59,11 @@ app.post('/confirm', function(req, res){
 
 
 app.get('/progress/:id', function(req, res){
-    fs.stat(db[req.params.id].tmpFile, function(err, stat){
+    var uploadInfo = db[req.params.id];
+    fs.stat(uploadInfo.tmpFile, function(err, stat){
         res.send({
-            bytes: stat.size
+            bytes: stat.size,
+            percent: stat.size / uploadInfo.contentLength * 100
         });
     });
 });
