@@ -6,7 +6,7 @@ var express = require('express'),
 
 var app = express.createServer();
 
-var db = {};
+var db = {"progress-test-id": {filename: "progress-test", tmpFile: "tmp/progress-test" }};
 
 app.configure(function(){
     app.set('view engine', 'jade');
@@ -20,21 +20,23 @@ app.get('/', function(req, res){
 app.post('/upload', function(req, res){
     formidableForm().parse(req, function(err, fields, files) {
       //console.log(util.inspect({fields: fields, files: files}));
-      if(fields.id == undefined){
+      if(notSet(fields.id)){
         badRequest(res, "missing id");
         return;
       }
-      if(files.file == undefined){
+      if(notSet(files.file)){
         badRequest(res, "wrong fieldname");
         return;
       }
 
       var filename = newFilename();
+      db[fields.id] = {
+            filename: filename,
+            tmpFile: files.file.path};
       fs.rename(files.file.path, filename, function(e){
         if(e)
             internalServerError(res, e);
         else
-            db[fields.id] = filename;
             uploadResponse(res, filename);
       });
     });
@@ -45,7 +47,16 @@ app.post('/confirm', function(req, res){
     formidableForm().parse(req, function(err, fields, files) {
         res.render("confirmed", {
             title: fields.title,
-            path: db[fields.id]
+            path: db[fields.id].filename
+        });
+    });
+});
+
+
+app.get('/progress/:id', function(req, res){
+    fs.stat(db[req.params.id].tmpFile, function(err, stat){
+        res.send({
+            bytes: stat.size
         });
     });
 });
@@ -63,6 +74,10 @@ function formidableForm(){
 function newFilename(){
     return "uploads/" + uuid.v1();
 };
+
+function notSet(value){
+    return value == undefined || value === ""
+}
 
 function badRequest(res, message){
     res.writeHead(400, {'content-type': 'text/html'});

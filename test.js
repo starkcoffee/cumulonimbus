@@ -1,13 +1,14 @@
 var vows = require('vows'),
     assert = require('assert'),
-    rest = require('restler');
+    rest = require('restler'),
+    fs = require('fs');
 
 
 var file = 'test-upload.png',
     stat = require('fs').statSync(file),
-    size = stat['size'];
+    size = stat['size'],
+    baseURL = "http://localhost:1337";
 
-var baseURL = "http://localhost:1337";
 
 vows.describe('file upload').addBatch({
     'when uploading a file': {
@@ -87,7 +88,22 @@ vows.describe('file upload').addBatch({
         'the response should be bad request': "pending"
     }
 
+}).export(module);
 
+vows.describe("progress status").addBatch({
+    'when asking for bytes uploaded': {
+        topic: function(){
+            var testFile = fs.openSync("tmp/progress-test", "w");
+            fs.writeSync(testFile, "part of file", 0);
+            get("/progress/progress-test-id", this.callback);
+        },
+        'the response should contain num bytes of file written so far': function (err, data, response) {
+            assert.equal(response.statusCode, 200);
+            var json = eval(data);
+            assert.equal(json.bytes, "part of file".length);
+            //assert.equal(json.percent, 100);
+        }
+    },
 
 }).export(module);
 
@@ -96,6 +112,12 @@ function post(relativeURL, form, callbackForAssertion){
     .on('complete', function(data, response){
         callbackForAssertion(null, data, response);
     });
+};
 
+function get(relativeURL, callbackForAssertion){
+   rest.get(baseURL + relativeURL)
+    .on('complete', function(data, response){
+        callbackForAssertion(null, data, response);
+    });
 };
 
