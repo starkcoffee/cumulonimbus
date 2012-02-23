@@ -1,5 +1,10 @@
 So 19 Feb 2012 13:37:21 CET
 
+ERRORS OCCURING IN FORMIDABLE.PARSE KILL THE WHOLE PROCESS!!!!
+throw an error in body of normal request handler and a internal server 500 is
+thrown. if you do this inside the formidable.parse method however, whole
+app crashes!!
+
 ZOMBIE CAN'T HANDLE MULTIPART FORMS
 zombie test hat aufgehört zu funktionieren, nachdem ich ein file element in das
 form hinzugefügt habe.  node.js wirft einen fehler:

@@ -19,7 +19,7 @@ html(lang="en")
         p
             #status.
                 Select a file!
-        form(method = "POST", action = "/", enctype = "multipart/form-data", target = "upload_response_secret_frame")
+        form(method = "POST", action = "/upload", enctype = "multipart/form-data", target = "upload_response_secret_frame")
             p
                 input(name="id", value="foo", type="hidden")
                 input(id="file", name="file", type="file")

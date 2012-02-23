@@ -33,21 +33,15 @@ app.post('/upload', function(req, res){
         return;
       }
 
-      var filename = newFilename();
-      db[fields.id] = {
-            filename: filename,
-            tmpFile: files.file.path,
-            size: files.file.size
-        };
-      fs.rename(files.file.path, filename, function(e){
+      var uploadInfo = store(fields.id, files.file);
+      fs.rename(files.file.path, uploadInfo.filename, function(e){
         if(e)
             internalServerError(res, e);
         else
-            uploadResponse(res, filename);
+            uploadResponse(res, uploadInfo.filename);
       });
     });
 });
-
 
 app.post('/confirm', function(req, res){
     formidableForm().parse(req, function(err, fields, files) {
@@ -58,34 +52,51 @@ app.post('/confirm', function(req, res){
     });
 });
 
-
 app.get('/progress/:id', function(req, res){
     var uploadInfo = db[req.params.id];
-    fs.stat(uploadInfo.tmpFile, function(err, stat){
-        if(err){
-            fs.stat(uploadInfo.filename, function(err, stat){
-                if(err){
-                }
-                else{
-                    res.send({
-                        bytes: stat.size,
-                        percent: stat.size / uploadInfo.size * 100
-                    });
-                }
+    checkFile(uploadInfo.tmpFile, function(exists, stat){
+        if(exists)
+            progressResponse(res, stat.size, uploadInfo.size)
+        else
+            checkFile(uploadInfo.filename, function(exists, stat){
+                progressResponse(res, stat.size, uploadInfo.size)
             });
-        }
-        else{
-            res.send({
-                bytes: stat.size,
-                percent: stat.size / uploadInfo.size * 100
-            });
-        }
     });
 });
 
 
 app.listen(1337);
 console.log('Cumulonimbus running at http://127.0.0.1:1337/');
+
+function store(id, file){
+    db[id] = {
+        filename: newFilename(),
+        tmpFile: file.path,
+        size: file.size
+    };
+    return db[id];
+};
+
+function progressResponse(res, currentSize, finalSize){
+    res.send({
+        bytes: currentSize,
+        percent: currentSize / finalSize * 100
+   });
+}
+
+// callback = function(fileExists, stat){..
+function checkFile(filename, callback){
+    fs.stat(filename, function(err, stat){
+        if (err){
+            if (err.code == 'ENOENT')
+                callback(false, stat);
+            else
+                throw new Error(err.Error);
+        }
+        else
+            callback(true, stat);
+    });
+};
 
 function formidableForm(){
     var form = new formidable.IncomingForm();
