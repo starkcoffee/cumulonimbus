@@ -10,7 +10,6 @@ var fileServer = new(static.Server)('./public');
 var db = {};
 
 app.get('/static/*', function(req,res){
-                  console.log("hi");
     fileServer.serve(req,res);
 });
 
@@ -76,8 +75,10 @@ app.get('/progress/:id', function(req, res){
    });
 });
 
-app.listen(1337);
-console.log('Cumulonimbus running at http://127.0.0.1:1337/');
+var port = process.env.PORT || 1337;
+app.listen(port, function() {
+  console.log("Listening on " + port);
+});
 
 function newUpload(id){
     db[id] = {};
