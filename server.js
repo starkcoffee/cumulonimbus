@@ -14,7 +14,7 @@ app.configure(function(){
 });
 
 app.get('/', function(req, res){
-    res.render("index");
+    res.render("index", {uploadId: uuid.v1()});
 });
 
 app.post('/upload/:id', function(req, res){

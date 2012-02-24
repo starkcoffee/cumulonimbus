@@ -7,7 +7,7 @@ html(lang="en")
 
         function displayProgress(){
             $.ajax({
-              url: '/progress/foo',
+              url: '/progress/#{uploadId}',
               dataType: 'json',
               success: function(data) {
                 if(data.percent != 100){
@@ -35,11 +35,11 @@ html(lang="en")
         p
             #status.
                 Select a file!
-        form(method = "POST", action = "/upload/foo", enctype = "multipart/form-data", target = "upload_response_secret_frame")
+        form(method = "POST", action = "/upload/#{uploadId}", enctype = "multipart/form-data", target = "upload_response_secret_frame")
             p
                 input(id="file", name="file", type="file")
                 iframe(id="upload_response_secret_frame", name="upload_response_secret_frame", src="", style="width:0;height:0;")
-        form(method = "POST", action = "/confirm/foo")
+        form(method = "POST", action = "/confirm/#{uploadId}")
             p
                 input(name="title", type="text", placeholder="Enter a title", size=50)
 
