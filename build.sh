@@ -19,13 +19,14 @@ start_server(){
 }
 
 run_tests(){
-    vows --spec test.js
+    npm test --spec test.js
 }
 
-mkdir tmp uploads
+mkdir -p tmp uploads
 kill_server
 start_server
 run_tests
-kill_server
+head -5 out.log
+#kill_server
 
 
