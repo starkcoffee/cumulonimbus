@@ -4,14 +4,30 @@ html(lang="en")
     title= "Cumulonimbus"
     script(type="text/javascript", src="http://code.jquery.com/jquery-1.7.1.js")
     script(type="text/javascript")
+
+        function displayProgress(){
+            $.ajax({
+              url: '/progress/foo',
+              dataType: 'json',
+              success: function(data) {
+                if(data.percent != 100){
+                    $('#status').html("Progress is " + Math.round(data.percent) + "%");
+                }
+              },
+              complete: function(){
+                setTimeout(displayProgress, 1000);
+              }
+            });
+        };
+
         $(document).ready(function(){
             $("#file").change(function(){
                 this.form.submit();
+                setTimeout(displayProgress, 1000);
             });
             $("#upload_response_secret_frame").load(function(){
                $("#status").html($("#upload_response_secret_frame").contents().find("#result").html());
             });
-
         });
   body
     h1 Upload all your fine work to Cumulonimbus
@@ -19,15 +35,13 @@ html(lang="en")
         p
             #status.
                 Select a file!
-        form(method = "POST", action = "/upload", enctype = "multipart/form-data", target = "upload_response_secret_frame")
+        form(method = "POST", action = "/upload/foo", enctype = "multipart/form-data", target = "upload_response_secret_frame")
             p
-                input(name="id", value="foo", type="hidden")
                 input(id="file", name="file", type="file")
                 iframe(id="upload_response_secret_frame", name="upload_response_secret_frame", src="", style="width:0;height:0;")
-        form(method = "POST", action = "/confirm")
+        form(method = "POST", action = "/confirm/foo")
             p
                 input(name="title", type="text", placeholder="Enter a title", size=50)
 
             p
                 input(id="confirm", name="confirm", type="submit", value="Confirm")
-                input(name="id", value="foo", type="hidden")
