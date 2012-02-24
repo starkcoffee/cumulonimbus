@@ -22,6 +22,7 @@ run_tests(){
     vows --spec test.js
 }
 
+mkdir tmp uploads
 kill_server
 start_server
 run_tests
