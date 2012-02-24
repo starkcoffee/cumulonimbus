@@ -5,6 +5,7 @@ A slapdash node.js uploading adventure
 ## Installation
 
 Prerequisites:
+
 * node
 * npm
 
@@ -15,6 +16,7 @@ Run:
     open http://localhost:1337
 
 Notes:
+
 * I have not tested this on IE
 * Despite my hopes and dreams, this may not be web-scale!
 
