@@ -2,9 +2,8 @@
 html(lang="en")
   head
     title= "Cumulonimbus"
-    script(type="text/javascript", src="http://code.jquery.com/jquery-1.7.1.js")
+    script(type="text/javascript", src="static/jquery-1.7.min.js")
     script(type="text/javascript")
-
         function displayProgress(){
             $.ajax({
               url: '/progress/#{uploadId}',

@@ -2,11 +2,17 @@ var express = require('express'),
     fs = require('fs'),
     formidable = require('formidable'),
     util = require('util'),
-    uuid = require('node-uuid');
+    uuid = require('node-uuid'),
+    static = require('node-static');
 
 var app = express.createServer();
-
+var fileServer = new(static.Server)('./public');
 var db = {};
+
+app.get('/static/*', function(req,res){
+                  console.log("hi");
+    fileServer.serve(req,res);
+});
 
 app.configure(function(){
     app.set('view engine', 'jade');
