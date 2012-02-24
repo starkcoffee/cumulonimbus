@@ -5,6 +5,11 @@ throw an error in body of normal request handler and a internal server 500 is
 thrown. if you do this inside the formidable.parse method however, whole
 app crashes!!
 
+RESTLER DOESNT SEND CONTENT-LENGTH FOR MULITPART POSTS
+so it uses transfer-encoding: chunked, which means I can't calculate the progress.
+I have forked and patched restler, but need to add a test and do a pull-request
+
+
 ZOMBIE CAN'T HANDLE MULTIPART FORMS
 zombie test hat aufgehört zu funktionieren, nachdem ich ein file element in das
 form hinzugefügt habe.  node.js wirft einen fehler:

@@ -56,21 +56,8 @@ vows.describe('file upload').addBatch({
 }).export(module);
 
 vows.describe("progress status").addBatch({
-    // this test uses seeded test data in the datastore, simulating
-    // a partial upload
     'when asking for progress of an upload': {
-        topic: function(){
-            var testFile = fs.openSync("tmp/progress-test", "w");
-            fs.writeSync(testFile, "part of a file", 0);
-            get("/progress/progress-test-id", this.callback);
-        },
-        'response should contain bytes and percent so far': "pending"
-        // 'response should contain bytes and percent so far': function (err, data, response) {
-            // assert.equal(response.statusCode, 200);
-            // var json = eval(data);
-            // assert.equal(json.bytes, "part of a file".length);
-            // assert.equal(json.percent, 50);
-        // }
+        'response should contain bytes and percent so far': 'pending - hard'
     },
     'when asking for progress when upload has completed': {
         topic: function(){
