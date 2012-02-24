@@ -6,12 +6,7 @@ var express = require('express'),
 
 var app = express.createServer();
 
-var db = {"progress-test-id": {
-                    filename: "progress-test",
-                    tmpFile: "tmp/progress-test",
-                    size: 28
-                }
-          };
+var db = {};
 
 app.configure(function(){
     app.set('view engine', 'jade');
@@ -22,48 +17,58 @@ app.get('/', function(req, res){
     res.render("index");
 });
 
-app.post('/upload', function(req, res){
-    formidableForm().parse(req, function(err, fields, files) {
-      if(notSet(fields.id)){
-        badRequest(res, "missing id");
-        return;
-      }
-      if(notSet(files.file)){
-        badRequest(res, "wrong fieldname");
-        return;
-      }
+app.post('/upload/:id', function(req, res){
+    var form = new formidable.IncomingForm(),
+        id = req.params.id,
+        error = false;
 
-      var uploadInfo = store(fields.id, files.file);
-      fs.rename(files.file.path, uploadInfo.filename, function(e){
-        if(e)
-            internalServerError(res, e);
-        else
-            uploadResponse(res, uploadInfo.filename);
-      });
+    form.uploadDir = "tmp";
+
+    db[id] = {};
+
+    form.on('progress', function(bytesReceived, bytesExpected) {
+       db[id].bytes = bytesReceived;
+       db[id].percent = bytesReceived / bytesExpected * 100;
+    })
+    .on('file', function(name, file){
+        db[id].tmpFile = file.path;
+    })
+    .on('error', function(e){
+        internalServerError(res, e);
+    })
+    .on('end', function() {
+        if(!error){
+            var path = newFilename();
+            fs.rename(db[id].tmpFile, path, function(e){
+                if(e)
+                    internalServerError(res, e);
+                else
+                    db[id].filename = path;
+                    uploadResponse(res, path);
+            });
+        }
     });
+    form.parse(req);
+
 });
 
-app.post('/confirm', function(req, res){
+app.post('/confirm/:id', function(req, res){
+    var filename = db[req.params.id].filename;
     formidableForm().parse(req, function(err, fields, files) {
         res.render("confirmed", {
             title: fields.title,
-            path: db[fields.id].filename
+            path: db[req.params.id].filename
         });
     });
 });
 
 app.get('/progress/:id', function(req, res){
     var uploadInfo = db[req.params.id];
-    checkFile(uploadInfo.tmpFile, function(exists, stat){
-        if(exists)
-            progressResponse(res, stat.size, uploadInfo.size)
-        else
-            checkFile(uploadInfo.filename, function(exists, stat){
-                progressResponse(res, stat.size, uploadInfo.size)
-            });
-    });
+    res.send({
+        bytes: uploadInfo.bytes,
+        percent: uploadInfo.percent
+   });
 });
-
 
 app.listen(1337);
 console.log('Cumulonimbus running at http://127.0.0.1:1337/');
@@ -76,13 +81,6 @@ function store(id, file){
     };
     return db[id];
 };
-
-function progressResponse(res, currentSize, finalSize){
-    res.send({
-        bytes: currentSize,
-        percent: currentSize / finalSize * 100
-   });
-}
 
 // callback = function(fileExists, stat){..
 function checkFile(filename, callback){
