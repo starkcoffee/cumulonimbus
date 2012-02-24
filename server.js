@@ -24,14 +24,14 @@ app.post('/upload/:id', function(req, res){
 
     form.uploadDir = "tmp";
 
-    db[id] = {};
+    var upload = newUpload(id);
 
     form.on('progress', function(bytesReceived, bytesExpected) {
-       db[id].bytes = bytesReceived;
-       db[id].percent = bytesReceived / bytesExpected * 100;
+       upload.bytes = bytesReceived;
+       upload.percent = bytesReceived / bytesExpected * 100;
     })
     .on('file', function(name, file){
-        db[id].tmpFile = file.path;
+        upload.tmpFile = file.path;
     })
     .on('error', function(e){
         internalServerError(res, e);
@@ -39,12 +39,12 @@ app.post('/upload/:id', function(req, res){
     .on('end', function() {
         if(!error){
             var path = newFilename();
-            fs.rename(db[id].tmpFile, path, function(e){
+            fs.rename(upload.tmpFile, path, function(e){
                 if(e)
                     internalServerError(res, e);
                 else
-                    db[id].filename = path;
-                    uploadResponse(res, path);
+                    upload.filename = path;
+                    uploadResponse(res, upload.filename);
             });
         }
     });
@@ -53,7 +53,7 @@ app.post('/upload/:id', function(req, res){
 });
 
 app.post('/confirm/:id', function(req, res){
-    var filename = db[req.params.id].filename;
+    var filename = getUpload(req.params.id).filename;
     formidableForm().parse(req, function(err, fields, files) {
         res.render("confirmed", {
             title: fields.title,
@@ -63,22 +63,22 @@ app.post('/confirm/:id', function(req, res){
 });
 
 app.get('/progress/:id', function(req, res){
-    var uploadInfo = db[req.params.id];
+    var upload = getUpload(req.params.id);
     res.send({
-        bytes: uploadInfo.bytes,
-        percent: uploadInfo.percent
+        bytes: upload.bytes,
+        percent: upload.percent
    });
 });
 
 app.listen(1337);
 console.log('Cumulonimbus running at http://127.0.0.1:1337/');
 
-function store(id, file){
-    db[id] = {
-        filename: newFilename(),
-        tmpFile: file.path,
-        size: file.size
-    };
+function newUpload(id){
+    db[id] = {};
+    return db[id];
+};
+
+function getUpload(id){
     return db[id];
 };
 
