@@ -81,13 +81,12 @@ vows.describe("progress status").addBatch({
                 get("/progress/" + id, that.callback);
             });
         },
-        'response should show total bytes and 100 %': "pending"
-        // 'response should show total bytes and 100 %': function(err, data, response){
-            // assert.equal(response.statusCode, 200);
-            // var json = eval(data);
-            // assert.equal(json.bytes, 8583);
-            // assert.equal(json.percent, 100);
-        // }
+        'response should show total bytes and 100 %': function(err, data, response){
+            assert.equal(response.statusCode, 200);
+            var json = eval(data);
+            assert.equal(json.bytes, 8583);
+            assert.equal(json.percent, 100);
+        }
     }
 }).export(module);
 
