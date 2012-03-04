@@ -19,7 +19,7 @@ start_server(){
 }
 
 run_tests(){
-    npm test --spec test.js
+    npm test --spec spec/test.js
 }
 
 mkdir -p tmp uploads

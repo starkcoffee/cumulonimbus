@@ -7,7 +7,7 @@
   "keywords": [],
   "main": "lib/server",
   "scripts": {
-    "test":   "vows --spec test.js"
+    "test":   "vows --spec spec/test.js"
   },
   "engines": {
     "node": "0.6.x"

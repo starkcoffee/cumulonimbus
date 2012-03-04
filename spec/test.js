@@ -6,7 +6,7 @@ var vows = require('vows'),
     fs = require('fs');
 
 
-var file = 'test-upload.png',
+var file = 'spec/test-upload.png',
     stat = require('fs').statSync(file),
     size = stat['size'],
     baseURL = "http://localhost:1337";
@@ -71,7 +71,7 @@ vows.describe("progress status").addBatch({
         'response should show total bytes and 100 %': function(err, data, response){
             assert.equal(response.statusCode, 200);
             var json = eval(data);
-            assert.equal(json.bytes, 8583);
+            assert.equal(json.bytes, 8588);
             assert.equal(json.percent, 100);
         }
     }
