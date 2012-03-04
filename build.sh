@@ -6,7 +6,7 @@ kill_server(){
 }
 
 start_server(){
-    (node server.js &> out.log) &
+    (node lib/server.js &> out.log) &
     # save pid so we can kill it
     echo $! > .pid
     # check for errors on startup
@@ -27,6 +27,6 @@ kill_server
 start_server
 run_tests
 head -5 out.log
-#kill_server
+kill_server
 
 
